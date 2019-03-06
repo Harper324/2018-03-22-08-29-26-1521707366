@@ -82,7 +82,7 @@ public class AddTest {
 
     @Test
     public void should_return_median_of_even_index() {
-        //求数组中所有偶数组成的数组的中位数
+        //求数组中所有偶数下标组成的数组的中位数
         Integer[] array = new Integer[]{1, 2, 3, 4, 5};
         List<Integer> arrayList = Arrays.asList(array);
 
@@ -92,7 +92,7 @@ public class AddTest {
 
     @Test
     public void should_return_average_of_even_index() {
-        //求数组中所有偶数的平均数
+        //求数组中所有偶数下标的平均数
         Integer[] array = new Integer[]{1, 2, 3, 4, 5};
         List<Integer> arrayList = Arrays.asList(array);
 
