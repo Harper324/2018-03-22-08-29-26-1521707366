@@ -1,117 +1,131 @@
 package com.thoughtworks.collection;
 
-public abstract class SingleLinkList<T> implements SingleLink {
-    private static class Node<T>{
-        public T date;  //数据域
-        Node<T> next;   //后指针
-        @SuppressWarnings("unused")
-        public Node(T d,Node<T> n){
-            date = d;
-            next = n;
+public class SingleLinkList<T> implements SingleLink {
+    //    保存链表的头节点
+    private Node header;
+    //    保存链表的尾节点
+    private Node tail;
+    //    保存节点数
+    int length = 0;
+
+    //    创建一个空的单项链表
+    public SingleLinkList() {
+        header = null;
+        tail = null;
+    }
+
+    //    指定某一个元素创建一个单项链表
+    public SingleLinkList(Object element) {
+        header = new Node(element, null);
+//        头和尾都指向同一个
+        tail = header;
+        length++;
+    }
+
+    //    返回链表长度
+
+    @Override
+    public int size() {
+        return length;
+    }
+
+//    采用尾插入法为链表添加新节点
+
+    @Override
+    public void addTailPointer(Object data) {
+        if (header == null) {
+            header = new Node(data, null);
+            tail = header;
+        } else {
+            Node newNode = new Node(data, null);
+            tail.setNext(newNode);
+            tail = newNode;
         }
-        public Node(T d){
-            date = d;
-            next = null;
+        length++;
+    }
+
+    @Override
+    public void addHeadPointer(Object data) {
+        if (header == null) {
+            addTailPointer(data);
+        } else {
+            header = new Node(data, header);
         }
+        length++;
     }
 
-    private int theSize;
-    private Node<T> head;
-
-    public void SingleLinkedListType()
-    {
-        clear();
-    }
-    //清除
-    public void clear(){
-        theSize = 0;
-        head = null;
+    @Override
+    public Object getTailData() {
+        return tail.getData();
     }
 
-    //大小
-    public int size(){
-        return theSize;
-    }
-
-    //添加结点
-    public void add(T x){
-        Node<T> newNode = new Node<T>(x);
-        if(head == null){
-            head = newNode ;
-        }else {
-            Node<T> pNode = head;
-            while(pNode.next!=null){
-                pNode = pNode.next;
+    @Override
+    public Object getNode(int index) {
+        if (index < 0 || index > length - 1) {
+            throw new IndexOutOfBoundsException("索引越界！");
+        }
+        Node current = header;
+        for (int i = 0; i < length; i++, current = current.getNext()) {
+            if (i == index) {
+                return current.getData();
             }
-            pNode.next = newNode;
         }
-        theSize++;
+        return null;
     }
 
-    //插入节点
-    public void add(int index ,T x){
-        checkRange(index);
-        Node<T> pNode = getNode(index);
-        Node<T> newNode = new Node<T>(x);
-        newNode.next = pNode.next;
-        pNode.next = newNode;
-        theSize++;
-    }
-
-    //加在头节点
-    public void addFirst(T x){
-        Node<T> newNode = new Node<T>(x);
-        newNode.next = head;
-        head =newNode;
-        theSize++;
-    }
-
-    //检查index是否越界
-    public void checkRange(int index){
-        if (index<0 || index > size())
-            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
-    }
-    private String outOfBoundsMsg(int index) {
-        return "Index: "+index+", Size: "+size();
-    }
-
-    //获取节点数据
-    public T get(int index){
-        Node<T> pNode = getNode(index);
-        return pNode.date;
-    }
-
-    //获取节点
-    public Node<T> getNode(int index){
-        checkRange(index);
-        Node<T> pNode = head;
-        for(int i=0;i<index;i++){
-            pNode = pNode.next;
+    public Node getIndex(int index) {
+        if (index < 0 || index > length - 1) {
+            throw new IndexOutOfBoundsException("索引越界！");
         }
-        return pNode;
-    }
-
-    //删除尾节点
-    public void removeTail(){
-        remove(size()-1);
-        theSize--;
-    }
-
-    //删除节点
-    public void remove(int index){
-        checkRange(index);
-
-        Node<T> pNode = getNode(index);
-        Node<T> temp = head;
-        for(int i=0;i<index-1;i++){
-            temp = temp.next;
+        Node current = header;
+        for (int i = 0; i < length; i++, current = current.getNext()) {
+            if (i == index) {
+                return current;
+            }
         }
-        temp.next = pNode.next;
-        pNode.next = null;
-        theSize--;
+        return null;
     }
 
+    @Override
+    public Object getHeaderData() {
+        return header.getData();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        if (length == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteLast() {
+        if (length != 0) {
+            Node prev = getIndex(length - 1);
+            prev.setNext(null);
+            length--;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteFirst() {
+        if (length != 0) {
+            header = header.getNext();
+            length--;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
+
+
+
 
 
 
