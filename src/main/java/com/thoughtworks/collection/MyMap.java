@@ -3,6 +3,8 @@ package com.thoughtworks.collection;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MyMap {
 
@@ -16,20 +18,16 @@ public class MyMap {
     }
 
     public List<Integer> getTriple() {
-        List tripleList = new ArrayList();
-        for (Integer ele : array) {
-            tripleList.add(ele * 3);
-        }
-        return tripleList;
+        Stream<Integer> stream = array.stream();
+        return stream.map(ele -> ele * 3).collect(Collectors.toList());
     }
 
     public List<String> mapLetter() {
-        List<String> letterList = new ArrayList<>();
-        for (Integer ele : array) {
-            letterList.add(Character.toString((char) (ele + 96)));
-        }
-        return letterList;
+        Stream<Integer> stream = array.stream();
+        Stream<String> letterStream = stream.map(ele -> (Character.toString((char) (ele + 96))));
+        return letterStream.collect(Collectors.toList());
     }
+
 
     public List<String> mapLetters() {
         List<String> letterList = new ArrayList<>();
@@ -41,19 +39,17 @@ public class MyMap {
             } else {
                 firstNumber = (ele - 1) / 26;
                 secondNumber = (ele - 1) % 26;
-                letterList.add(Character.toString((char) (firstNumber + 96)) + Character.toString((char) (secondNumber + 97)));
+                letterList.add((char) (firstNumber + 96) + Character.toString((char) (secondNumber + 97)));
             }
         }
         return letterList;
     }
 
     public List<Integer> sortFromBig() {
-        Collections.sort(array, Collections.reverseOrder());
-        return array;
+        return array.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
     }
 
     public List<Integer> sortFromSmall() {
-        Collections.sort(array);
-        return array;
+        return array.stream().sorted().collect(Collectors.toList());
     }
 }

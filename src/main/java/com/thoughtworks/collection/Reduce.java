@@ -2,8 +2,12 @@ package com.thoughtworks.collection;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static java.util.stream.IntStream.*;
 
 public class Reduce {
 
@@ -14,21 +18,20 @@ public class Reduce {
     }
 
     public int getMaximum() {
-        Collections.sort(arrayList);
-        return arrayList.get(arrayList.size() - 1);
+        Optional<Integer> max = arrayList.stream().sorted(Comparator.reverseOrder()).findFirst();
+        return max.get();
     }
+
 
     public double getMinimum() {
-        Collections.sort(arrayList);
-        return (double) arrayList.get(0);
+        Optional<Integer> min = arrayList.stream().sorted().findFirst();
+        return min.get();
     }
 
+
     public double getAverage() {
-        double sum = 0;
-        for (Integer ele : arrayList) {
-            sum += ele;
-        }
-        return sum / arrayList.size();
+        Stream<Integer> stream = arrayList.stream();
+        return (double)stream.reduce(0, (a, b) -> a + b)/arrayList.size();
     }
 
     public double getOrderedMedian() {
@@ -39,14 +42,8 @@ public class Reduce {
     }
 
     public int getFirstEven() {
-        int firstEven = 0;
-        for (Integer ele : arrayList) {
-            if (ele % 2 == 0) {
-                firstEven = ele;
-                break;
-            }
-        }
-        return firstEven;
+        Stream<Integer> stream = arrayList.stream();
+        return stream.filter(ele -> ele % 2 == 0).findFirst().get();
     }
 
     public int getIndexOfFirstEven() {
@@ -91,9 +88,9 @@ public class Reduce {
 
     public int getLastOdd() {
         Add add = new Add();
-        List evenList = add.getEvenOrOdd(arrayList, 1);
-
-        return (int) evenList.get(evenList.size() - 1);
+        Stream<Integer> evenStream = add.getEvenOrOdd(arrayList, 1);
+        List<Integer> evenList = evenStream.collect(Collectors.toList());
+        return evenList.get(evenList.size() - 1);
     }
 
     public int getIndexOfLastOdd() {
@@ -105,4 +102,6 @@ public class Reduce {
         }
         return indexOfLastOdd;
     }
+
+
 }

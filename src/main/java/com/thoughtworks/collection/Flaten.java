@@ -4,7 +4,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Flaten {
 
@@ -15,26 +18,15 @@ public class Flaten {
     }
 
     public List<Integer> transformToOneDimesional() {
-        List oneDimensionalList = new ArrayList();
-        for (Integer[] arr : array) {
-            for (Integer ele : arr) {
-                oneDimensionalList.add(ele);
-            }
-        }
-        return oneDimensionalList;
+        Stream<Integer[]> stream= Arrays.stream(array);
+        Stream<Integer> oneDemensionalStream=stream.flatMap(ele->Arrays.stream(ele));
+        return oneDemensionalStream.collect(Collectors.toList());
     }
 
 
     public List<Integer> transformToUnrepeatedOneDimesional() {
         List oneDimensionalList = transformToOneDimesional();
-        List noRepeatedList = new ArrayList();
-        for (Object ele : oneDimensionalList) {
-            if (!noRepeatedList.contains(ele)) {
-                noRepeatedList.add(ele);
-            }
-        }
-        return noRepeatedList;
+        Stream<Integer> stream=oneDimensionalList.stream().distinct();
+        return stream.collect(Collectors.toList());
     }
-
-
 }

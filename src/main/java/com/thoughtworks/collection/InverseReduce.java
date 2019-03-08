@@ -5,23 +5,21 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InverseReduce {
 
     private Random random = new Random();
 
-    public InverseReduce() {}
+    public InverseReduce() {
+    }
 
     public InverseReduce(Random random) {
         this.random = random;
     }
 
     public List<Integer> divideToSmaller(int number) {
-        List decreasingList=new ArrayList();
-        do {
-            number-=2;
-            decreasingList.add(number);
-        } while(number>1);
-        return decreasingList;
+        return Stream.iterate(number - 2, n -> n - 2).limit((number - 1) / 2).collect(Collectors.toList());
     }
 }

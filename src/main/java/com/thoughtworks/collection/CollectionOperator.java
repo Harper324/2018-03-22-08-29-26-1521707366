@@ -1,42 +1,40 @@
 package com.thoughtworks.collection;
 
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CollectionOperator {
     public List<Integer> getListByInterval(int left, int right) {
-        List result = new ArrayList();
+
         if (left < right) {
-            while (left <= right) {
-                result.add(left);
-                left++;
-            }
+            return Stream.iterate(left, n -> n + 1).limit(right - left + 1).collect(Collectors.toList());
         } else {
-            while (left >= right) {
-                result.add(left);
-                left--;
-            }
+            return Stream.iterate(left, n -> n - 1).limit(left - right + 1).collect(Collectors.toList());
+
         }
-        return result;
     }
 
     public List<Integer> getEvenListByIntervals(int left, int right) {
         Add add = new Add();
         List allNumber = getListByInterval(left, right);
-        List evenList = add.getEvenOrOdd(allNumber, 0);
-        return evenList;
+        Stream<Integer> evenStream = add.getEvenOrOdd(allNumber, 0);
+        return evenStream.collect(Collectors.toList());
     }
 
     public List<Integer> popEvenElments(int[] array) {
-        List evenList = new ArrayList();
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] % 2 == 0) {
-                evenList.add(array[i]);
-            }
-        }
-        return evenList;
+
+        IntStream stream = Arrays.stream(array);
+        IntStream stream1 = stream.filter(ele -> ele % 2 == 0);
+        return stream1.boxed().collect(Collectors.toList());
+
     }
 
     public int popLastElment(int[] array) {
@@ -46,16 +44,12 @@ public class CollectionOperator {
     }
 
     public List<Integer> popCommonElement(int[] firstArray, int[] secondArray) {
-        List commonElement = new ArrayList();
-        for (int i = 0; i < firstArray.length; i++) {
-            for (int j = 0; j < secondArray.length; j++) {
-                if (firstArray[i] == secondArray[j]) {
-                    commonElement.add(firstArray[i]);
-                    break;
-                }
-            }
-        }
-        return commonElement;
+        Stream<Integer> firstStream = Arrays.stream(firstArray).boxed();
+        List<Integer> secondList=IntStream.of(secondArray).boxed().collect(Collectors.toList());
+        Stream<Integer> secondStream = Arrays.stream(secondArray).boxed();
+
+        List<Integer> list = firstStream.filter(t -> secondList.contains(t)).collect(Collectors.toList());
+        return list;
     }
 
     public List<Integer> addUncommonElement(Integer[] firstArray, Integer[] secondArray) {

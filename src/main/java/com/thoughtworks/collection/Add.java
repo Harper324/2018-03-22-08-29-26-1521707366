@@ -3,27 +3,33 @@ package com.thoughtworks.collection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Stream.concat;
 
 public class Add {
     public int getSumOfEvens(int leftBorder, int rightBorder) {
-        return getSumOfOddsOrEven(leftBorder, rightBorder, 0);
+        Stream<Integer> series = getSeries(leftBorder, rightBorder);
+        int sum = 0;
+        sum = series.filter(ele -> ele % 2 == 0).reduce(0, (a, b) -> a + b);
+        return sum;
+    }
+
+    public Stream<Integer> getSeries(int leftBorder, int rightBorder) {
+        int firstNumber = Math.min(leftBorder, rightBorder);
+        int lastNumber = Math.max(leftBorder, rightBorder);
+        long length = lastNumber - firstNumber + 1;
+        Stream<Integer> series = Stream.iterate(firstNumber, n -> n + 1).limit(length);
+        return series;
     }
 
     public int getSumOfOdds(int leftBorder, int rightBorder) {
-        return getSumOfOddsOrEven(leftBorder, rightBorder, 1);
-    }
-
-    public int getSumOfOddsOrEven(int leftBorder, int rightBorder, int oddOrEven) {
-        int firstNumber = Math.min(leftBorder, rightBorder);
-        int lastNumber = Math.max(leftBorder, rightBorder);
-        int firstOddOrEven = (firstNumber % 2 == oddOrEven) ? firstNumber : firstNumber + 1;
+        Stream series = getSeries(leftBorder, rightBorder);
         int sum = 0;
-        while (firstOddOrEven <= lastNumber) {
-            sum += firstOddOrEven;
-            firstOddOrEven += 2;
-        }
+        sum = (int) series.filter(ele -> (int) ele % 2 == 1).reduce(0, (a, b) -> (int) a + (int) b);
         return sum;
     }
 
@@ -52,6 +58,8 @@ public class Add {
     }
 
     public double getMedianOfEvenIndex(List<Integer> arrayList) {
+        Stream<Integer> stream = arrayList.stream();
+        Stream<Integer> evenStream = stream.filter(ele -> ele % 2 == 0);
         List evenArray = new ArrayList();
         for (int i = 0; i < arrayList.size(); i += 2) {
             evenArray.add(arrayList.get(i));
@@ -71,38 +79,27 @@ public class Add {
     }
 
     public boolean isIncludedInEvenIndex(List<Integer> arrayList, Integer specialElment) {
-        List evenArray = getEvenOrOdd(arrayList, 0);
-        return evenArray.contains(specialElment);
+        Stream<Integer> evenStream = getEvenOrOdd(arrayList, 0);
+        return evenStream.anyMatch(ele -> ele == specialElment);
     }
 
     public List<Integer> getUnrepeatedFromEvenIndex(List<Integer> arrayList) {
-        List evenArray = getEvenOrOdd(arrayList, 0);
-        List unrepeatedArray = new ArrayList();
-        for (int i = 0; i < evenArray.size(); i++) {
-            if (!unrepeatedArray.contains(evenArray.get(i))) {
-                unrepeatedArray.add(evenArray.get(i));
-            }
-        }
-        return unrepeatedArray;
+        Stream<Integer> evenStream = getEvenOrOdd(arrayList, 0);
+        List<Integer> unrepeated = evenStream.distinct().sorted().collect(Collectors.toList());
+        return unrepeated;
     }
 
-    public List<Integer> getEvenOrOdd(List<Integer> arrayList, int evenOrOdd) {
-        List evenOrOddArray = new ArrayList();
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (arrayList.get(i) % 2 == evenOrOdd) {
-                evenOrOddArray.add(arrayList.get(i));
-            }
-        }
-        return evenOrOddArray;
+    public Stream<Integer> getEvenOrOdd(List<Integer> arrayList, int evenOrOdd) {
+        Stream<Integer> evenOrOddStream = arrayList.stream().filter(ele -> ele % 2 == evenOrOdd);
+        return evenOrOddStream;
+
     }
 
     public List<Integer> sortByEvenAndOdd(List<Integer> arrayList) {
-        List evenArray = getEvenOrOdd(arrayList, 0);
-        List oddArray = getEvenOrOdd(arrayList, 1);
-        Collections.sort(evenArray);
-        Collections.sort(oddArray, Collections.reverseOrder());
-        evenArray.addAll(oddArray);
-        return evenArray;
+        Stream<Integer> evenArray = getEvenOrOdd(arrayList, 0).sorted();
+        Stream<Integer> oddArray = getEvenOrOdd(arrayList, 1).sorted(Comparator.reverseOrder());
+        Stream<Integer> result = concat(evenArray, oddArray);
+        return result.collect(Collectors.toList());
     }
 
     public List<Integer> getProcessedList(List<Integer> arrayList) {
