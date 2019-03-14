@@ -45,7 +45,7 @@ public class CollectionOperator {
 
     public List<Integer> popCommonElement(int[] firstArray, int[] secondArray) {
         Stream<Integer> firstStream = Arrays.stream(firstArray).boxed();
-        List<Integer> secondList=IntStream.of(secondArray).boxed().collect(Collectors.toList());
+        List<Integer> secondList = IntStream.of(secondArray).boxed().collect(Collectors.toList());
         Stream<Integer> secondStream = Arrays.stream(secondArray).boxed();
 
         List<Integer> list = firstStream.filter(t -> secondList.contains(t)).collect(Collectors.toList());
@@ -53,15 +53,10 @@ public class CollectionOperator {
     }
 
     public List<Integer> addUncommonElement(Integer[] firstArray, Integer[] secondArray) {
-        List firstList = new ArrayList(Arrays.asList(firstArray));
-        for (int i = 0; i < firstList.size(); i++) {
-            for (int j = 0; j < secondArray.length; j++) {
-                if (!firstList.contains(secondArray[j])) {
-                    firstList.add(secondArray[j]);
-                    break;
-                }
-            }
-        }
-        return firstList;
+        Stream<Integer> firstStream = Arrays.stream(firstArray);
+        Stream<Integer> secondStream = Arrays.stream(secondArray);
+        List<Integer> unionList = Stream.concat(firstStream, secondStream).distinct().collect(Collectors.toList());
+
+        return unionList;
     }
 }

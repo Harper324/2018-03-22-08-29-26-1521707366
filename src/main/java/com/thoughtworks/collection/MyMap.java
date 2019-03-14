@@ -30,18 +30,10 @@ public class MyMap {
 
 
     public List<String> mapLetters() {
-        List<String> letterList = new ArrayList<>();
-        int firstNumber = 0;
-        int secondNumber = 0;
-        for (Integer ele : array) {
-            if (ele < 26) {
-                letterList.add(Character.toString((char) (ele + 96)));
-            } else {
-                firstNumber = (ele - 1) / 26;
-                secondNumber = (ele - 1) % 26;
-                letterList.add((char) (firstNumber + 96) + Character.toString((char) (secondNumber + 97)));
-            }
-        }
+        Stream<String> letterStreamA=array.stream().filter(number->number<26).map(number->Character.toString((char)(number+96)));
+        Stream<String> letterStreamB=array.stream().filter(number->number>=26).map(number->((char)((number-1)/26+96)+
+                Character.toString((char)(((number-1)%26)+97))));
+        List<String> letterList=Stream.concat(letterStreamA,letterStreamB).collect(Collectors.toList());
         return letterList;
     }
 
